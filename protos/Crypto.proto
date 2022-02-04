@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package DevIO.Rpc.Services;
+
+service CryptoService {
+  rpc GetCryptoCurrencies (google.protobuf.Empty) returns (CryptoResponse);
+}
+
+message CryptoResponse {
+  string Host = 1;
+  repeated Crypto CryptoCurrencies = 2;
+}
+
+message Crypto {
+  string Sigla = 1; 
+  string Name = 2;
+  string Price = 3;
+}

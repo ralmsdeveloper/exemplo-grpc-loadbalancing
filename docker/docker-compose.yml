@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app-frontend:
+    build:
+      context: ./../
+      dockerfile: ./src/DevIO.Frontend/Dockerfile
+    image: app-frontend
+    ports:
+      - "8080:80"
+  app-microservice:
+    build:
+      context: ./../
+      dockerfile: ./src/DevIO.Microservice/Dockerfile
+    image: app-microservice
+    ports:
+      - "8081:80"

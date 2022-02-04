@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	  <TargetFramework>net6.0</TargetFramework>
+	  <Nullable>enable</Nullable>
+	  <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
+    <PackageReference Include="Grpc.Tools" PrivateAssets="All" Version="2.44.0-pre2" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.43.0-pre1" />
+    <PackageReference Include="MudBlazor" Version="6.0.6" />
+
+    <Protobuf Include="..\..\protos\Crypto.proto" GrpcServices="Client" Link="Protos\Crypto.proto" Access="Internal" />
+  </ItemGroup>
+
+</Project>

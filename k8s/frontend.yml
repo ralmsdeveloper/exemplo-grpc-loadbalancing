@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: app-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: frontend
+  template:
+    metadata:
+      labels:
+        app: app-frontend
+        service: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: app-frontend:latest
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: MICROSERVICE_URL
+              value: dns:///microservice.default.svc.cluster.local
+          imagePullPolicy: Never    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: app-frontend
+    service: frontend
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 80
+      protocol: TCP
+      nodePort: 30002
+  selector:
+    service: frontend

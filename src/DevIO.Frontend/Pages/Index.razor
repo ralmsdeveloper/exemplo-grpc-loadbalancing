@@ -1,0 +1,128 @@
+﻿@page "/"
+@using DevIO.Rpc.Services
+@using Google.Protobuf.WellKnownTypes
+@using System.Text
+@using System.Net
+@using System.Collections.Concurrent
+@inject GrpcChannel Channel
+
+<PageTitle>Index</PageTitle>
+<center><img src="images/devio.png" alt="" /> </center><br />
+<MudGrid>
+    <MudItem xs="12" sm="12" md="6">
+        <MudCard Style="height:100%;">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ConsultarOnClick">Buscar cryptos</MudButton>
+                    Consulta feita no host: <b>@_lastHost</b>
+                    @error
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent Class="px-0">
+                <MudSimpleTable Elevation="0" Hover="true">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (_cryptoResponse is not null)
+                        {
+                            @foreach (var crypto in _cryptoResponse.CryptoCurrencies.OrderBy(x => x.Name))
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex flex-row">
+                                            <div class="ml-6">
+                                                <MudText Typo="Typo.subtitle2">@crypto.Sigla</MudText>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><MudText>@crypto.Name</MudText></td>
+                                    <td>
+                                        <MudChip Label="true" Color="Color.Success" Size="Size.Small" Class="ml-auto mud-elevation-25">@crypto.Price</MudChip>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="6">
+        <MudCard Style="height:100%;">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="LimparOnClick">Limpar log</MudButton>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent Class="px-0">
+                <MudSimpleTable Elevation="0" Hover="true">
+                    <thead>
+                        <tr>
+                            <th>Hosts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var host in _hosts.OrderBy(x => x))
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex flex-row">
+                                        <div class="ml-12">
+                                            <MudText Typo="Typo.subtitle2">@host</MudText>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+@code {
+    private CryptoResponse? _cryptoResponse;
+    private string? error;
+    private string? _lastHost;
+    private ConcurrentBag<string> _hosts = new();
+
+    async Task ConsultarOnClick()
+    {
+        await GetCryptoAsync();
+    }
+
+    void LimparOnClick()
+    {
+        _hosts.Clear();
+    }
+
+    private async Task GetCryptoAsync()
+    {
+        error = null;
+        try
+        {
+            var client = new CryptoService.CryptoServiceClient(Channel);
+
+            _cryptoResponse = await client.GetCryptoCurrenciesAsync(new Empty());
+
+            if (_cryptoResponse is not null)
+            {
+                _lastHost = _cryptoResponse.Host;
+
+                if (!_hosts.Contains(_lastHost))
+                {
+                    _hosts.Add(_lastHost);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.ToString();
+        }
+    }
+}

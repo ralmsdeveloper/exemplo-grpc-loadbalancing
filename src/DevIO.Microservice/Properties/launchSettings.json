@@ -1,0 +1,13 @@
+﻿{
+  "profiles": {
+    "DevIO.Microservice": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5273;https://localhost:7273",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
