@@ -1,4 +1,4 @@
-﻿docker rmi app-microservice:latest
+docker rmi app-microservice:latest
 docker rmi app-frontend:latest
 
 docker-compose -f .\docker\docker-compose.yml build app-frontend
